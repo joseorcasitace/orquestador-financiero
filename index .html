@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orquestador Docente — Análisis Financiero con IA · ADVANCE</title>
+<meta name="description" content="Multi-Agente de Análisis Financiero con IA para posgrado. Metodología Labs 7–9 certificada. ADVANCE · Universidad del Rosario.">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --rojo:#C8102E; --rojo-d:#9e0d24; --rojo-l:#f5e6e9;
+  --bg:#F2F0EE; --text:#1a1614; --muted:#6b6560;
+  --border:#e0ddd9; --white:#ffffff;
+  --gold:#c4922a; --blue:#1a4f8a; --green:#1a6b3c;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden;}
+
+/* ── HEADER ── */
+.header{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  background:rgba(26,22,20,0.96);backdrop-filter:blur(12px);
+  border-bottom:2px solid var(--rojo);
+  padding:0 5%;height:60px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.header-brand{display:flex;align-items:center;gap:12px;}
+.hlogo{
+  width:34px;height:34px;background:var(--rojo);border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'DM Serif Display',serif;font-size:18px;color:white;
+}
+.hname{font-size:13px;font-weight:600;color:white;letter-spacing:.02em;}
+.hname span{color:#888;font-weight:300;}
+.hbadge{
+  background:var(--rojo);color:white;font-size:9px;font-weight:700;
+  padding:3px 10px;border-radius:20px;letter-spacing:.08em;text-transform:uppercase;
+}
+.header-nav{display:flex;align-items:center;gap:24px;}
+.hnav-link{color:#aaa;font-size:12px;font-weight:500;text-decoration:none;transition:color .15s;}
+.hnav-link:hover{color:white;}
+.hnav-cta{
+  background:var(--rojo);color:white;font-size:12px;font-weight:600;
+  padding:8px 18px;border-radius:7px;text-decoration:none;
+  transition:background .15s;letter-spacing:.02em;
+}
+.hnav-cta:hover{background:var(--rojo-d);}
+
+/* ── HERO ── */
+.hero{
+  min-height:100vh;
+  background:var(--text);
+  display:flex;align-items:center;
+  position:relative;overflow:hidden;
+  padding:120px 5% 80px;
+}
+/* Grid texture */
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(200,16,46,.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200,16,46,.06) 1px, transparent 1px);
+  background-size:48px 48px;
+}
+/* Red accent bar */
+.hero::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:3px;
+  background:var(--rojo);
+}
+.hero-inner{
+  max-width:1100px;margin:0 auto;width:100%;
+  display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;
+  position:relative;z-index:1;
+}
+.hero-left{animation:fadeUp .8s ease both;}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(200,16,46,.15);border:1px solid rgba(200,16,46,.3);
+  color:var(--rojo);font-size:11px;font-weight:700;
+  padding:5px 14px;border-radius:20px;letter-spacing:.08em;text-transform:uppercase;
+  margin-bottom:24px;
+}
+.hero-eyebrow-dot{width:6px;height:6px;border-radius:50%;background:var(--rojo);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+.hero-title{
+  font-family:'DM Serif Display',serif;
+  font-size:clamp(36px,4.5vw,56px);
+  color:white;line-height:1.1;margin-bottom:8px;
+}
+.hero-title em{color:var(--rojo);font-style:normal;}
+.hero-subtitle{
+  font-family:'DM Serif Display',serif;
+  font-size:clamp(18px,2.2vw,26px);
+  color:#888;line-height:1.3;margin-bottom:28px;font-style:italic;
+}
+.hero-desc{
+  font-size:15px;color:#bbb;line-height:1.8;
+  margin-bottom:36px;max-width:480px;
+}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap;}
+.btn-primary{
+  background:var(--rojo);color:white;font-size:14px;font-weight:600;
+  padding:14px 28px;border-radius:9px;text-decoration:none;
+  transition:all .2s;display:inline-flex;align-items:center;gap:8px;
+  box-shadow:0 4px 20px rgba(200,16,46,.35);
+}
+.btn-primary:hover{background:var(--rojo-d);transform:translateY(-2px);box-shadow:0 8px 28px rgba(200,16,46,.45);}
+.btn-outline{
+  background:transparent;color:white;font-size:14px;font-weight:500;
+  padding:14px 28px;border-radius:9px;text-decoration:none;
+  border:1px solid rgba(255,255,255,.2);transition:all .2s;
+  display:inline-flex;align-items:center;gap:8px;
+}
+.btn-outline:hover{border-color:rgba(255,255,255,.5);background:rgba(255,255,255,.05);}
+
+.hero-right{animation:fadeUp .8s .2s ease both;position:relative;}
+/* Pipeline visual */
+.pipeline-card{
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);
+  border-radius:16px;padding:28px;
+  backdrop-filter:blur(10px);
+}
+.pipeline-title{
+  font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--rojo);margin-bottom:20px;display:flex;align-items:center;gap:8px;
+}
+.pipeline-title::before{content:'';width:20px;height:1px;background:var(--rojo);}
+.pipeline-items{display:flex;flex-direction:column;gap:3px;}
+.pipeline-item{
+  display:flex;align-items:center;gap:14px;
+  padding:12px 16px;border-radius:9px;
+  border:1px solid transparent;transition:all .2s;
+  cursor:default;
+}
+.pipeline-item.certified{background:rgba(26,107,60,.1);border-color:rgba(26,107,60,.25);}
+.pipeline-item.pending{background:rgba(255,255,255,.02);border-color:rgba(255,255,255,.06);}
+.pi-num{
+  width:28px;height:28px;border-radius:7px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;flex-shrink:0;
+}
+.certified .pi-num{background:rgba(26,107,60,.2);color:#4ade80;}
+.pending .pi-num{background:rgba(255,255,255,.06);color:#666;}
+.pi-info{flex:1;}
+.pi-name{font-size:12px;font-weight:600;display:block;}
+.certified .pi-name{color:white;}
+.pending .pi-name{color:#555;}
+.pi-desc{font-size:10px;display:block;margin-top:1px;}
+.certified .pi-desc{color:#4ade80;}
+.pending .pi-desc{color:#444;}
+.pi-badge{font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;flex-shrink:0;}
+.certified .pi-badge{background:rgba(26,107,60,.3);color:#4ade80;}
+.pending .pi-badge{background:rgba(255,255,255,.05);color:#444;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+
+/* ── STATS STRIP ── */
+.stats{
+  background:white;border-bottom:1px solid var(--border);
+  padding:28px 5%;
+}
+.stats-inner{
+  max-width:1100px;margin:0 auto;
+  display:grid;grid-template-columns:repeat(4,1fr);gap:0;
+}
+.stat-item{
+  text-align:center;padding:16px;
+  border-right:1px solid var(--border);
+}
+.stat-item:last-child{border-right:none;}
+.stat-num{
+  font-family:'DM Serif Display',serif;
+  font-size:36px;color:var(--rojo);display:block;line-height:1;margin-bottom:6px;
+}
+.stat-label{font-size:11px;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:.06em;}
+
+/* ── SECTION ── */
+.section{padding:80px 5%;}
+.section-inner{max-width:1100px;margin:0 auto;}
+.section-eyebrow{
+  font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;
+  color:var(--rojo);margin-bottom:12px;
+}
+.section-title{
+  font-family:'DM Serif Display',serif;
+  font-size:clamp(28px,3vw,40px);color:var(--text);
+  line-height:1.2;margin-bottom:14px;
+}
+.section-desc{font-size:15px;color:var(--muted);line-height:1.8;max-width:560px;}
+.section-header{margin-bottom:52px;}
+
+/* ── FEATURES GRID ── */
+.features-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:20px;
+}
+.feature-card{
+  background:white;border:1px solid var(--border);border-radius:14px;
+  padding:28px;transition:all .2s;position:relative;overflow:hidden;
+}
+.feature-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:var(--rojo);transform:scaleX(0);transform-origin:left;
+  transition:transform .3s;
+}
+.feature-card:hover{border-color:var(--rojo);transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,.08);}
+.feature-card:hover::before{transform:scaleX(1);}
+.fc-icon{
+  width:44px;height:44px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;margin-bottom:16px;
+}
+.fc-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:8px;}
+.fc-desc{font-size:13px;color:var(--muted);line-height:1.7;}
+.fc-tag{
+  display:inline-flex;align-items:center;gap:4px;
+  margin-top:14px;font-size:10px;font-weight:700;
+  padding:3px 9px;border-radius:20px;text-transform:uppercase;letter-spacing:.05em;
+}
+
+/* ── METHODOLOGY ── */
+.method-section{background:var(--text);padding:80px 5%;}
+.method-inner{max-width:1100px;margin:0 auto;}
+.method-header{margin-bottom:52px;}
+.method-header .section-title{color:white;}
+.method-header .section-desc{color:#aaa;}
+.method-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.method-card{
+  border-radius:12px;padding:24px;position:relative;overflow:hidden;
+}
+.method-card.cert{background:rgba(26,107,60,.1);border:1px solid rgba(26,107,60,.25);}
+.method-card.pend{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);}
+.mc-lab{
+  font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;
+  margin-bottom:8px;display:flex;align-items:center;gap:6px;
+}
+.cert .mc-lab{color:#4ade80;}
+.pend .mc-lab{color:#444;}
+.mc-num{
+  width:20px;height:20px;border-radius:5px;
+  display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;
+}
+.cert .mc-num{background:rgba(74,222,128,.2);color:#4ade80;}
+.pend .mc-num{background:rgba(255,255,255,.06);color:#444;}
+.mc-title{font-size:14px;font-weight:600;margin-bottom:6px;}
+.cert .mc-title{color:white;}
+.pend .mc-title{color:#444;}
+.mc-items{list-style:none;display:flex;flex-direction:column;gap:3px;}
+.mc-items li{font-size:11px;padding-left:12px;position:relative;}
+.mc-items li::before{content:'·';position:absolute;left:0;}
+.cert .mc-items li{color:#888;}
+.pend .mc-items li{color:#333;}
+.mc-status{
+  margin-top:14px;font-size:9px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.08em;padding:3px 10px;border-radius:20px;display:inline-block;
+}
+.cert .mc-status{background:rgba(74,222,128,.15);color:#4ade80;}
+.pend .mc-status{background:rgba(255,255,255,.04);color:#333;}
+
+/* ── HOW IT WORKS ── */
+.how-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;position:relative;}
+.how-grid::before{
+  content:'';position:absolute;top:28px;left:12%;right:12%;height:1px;
+  background:linear-gradient(90deg,transparent,var(--rojo),transparent);
+}
+.how-step{text-align:center;padding:0 16px;position:relative;}
+.how-num{
+  width:56px;height:56px;border-radius:50%;
+  background:var(--rojo);color:white;
+  font-family:'DM Serif Display',serif;font-size:22px;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 18px;position:relative;z-index:1;
+  box-shadow:0 4px 18px rgba(200,16,46,.35);
+}
+.how-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:8px;}
+.how-desc{font-size:12px;color:var(--muted);line-height:1.6;}
+
+/* ── CTA ── */
+.cta-section{
+  background:var(--rojo);padding:72px 5%;text-align:center;
+  position:relative;overflow:hidden;
+}
+.cta-section::before{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(
+    45deg,transparent,transparent 40px,
+    rgba(0,0,0,.04) 40px,rgba(0,0,0,.04) 41px
+  );
+}
+.cta-inner{max-width:680px;margin:0 auto;position:relative;z-index:1;}
+.cta-title{
+  font-family:'DM Serif Display',serif;
+  font-size:clamp(28px,3.5vw,44px);color:white;
+  line-height:1.2;margin-bottom:16px;
+}
+.cta-desc{font-size:16px;color:rgba(255,255,255,.8);line-height:1.7;margin-bottom:36px;}
+.cta-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+.btn-white{
+  background:white;color:var(--rojo);font-size:14px;font-weight:700;
+  padding:14px 28px;border-radius:9px;text-decoration:none;
+  transition:all .2s;box-shadow:0 4px 18px rgba(0,0,0,.15);
+}
+.btn-white:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.2);}
+.btn-white-outline{
+  background:transparent;color:white;font-size:14px;font-weight:500;
+  padding:14px 28px;border-radius:9px;text-decoration:none;
+  border:2px solid rgba(255,255,255,.5);transition:all .2s;
+}
+.btn-white-outline:hover{border-color:white;background:rgba(255,255,255,.1);}
+
+/* ── FOOTER ── */
+.footer{
+  background:var(--text);padding:40px 5% 32px;
+  border-top:1px solid rgba(255,255,255,.06);
+}
+.footer-inner{
+  max-width:1100px;margin:0 auto;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;
+}
+.footer-brand{display:flex;align-items:center;gap:10px;}
+.footer-logo{
+  width:28px;height:28px;background:var(--rojo);border-radius:6px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'DM Serif Display',serif;font-size:14px;color:white;
+}
+.footer-text{font-size:12px;color:#555;}
+.footer-text strong{color:#888;}
+.footer-links{display:flex;gap:20px;}
+.footer-link{font-size:11px;color:#444;text-decoration:none;transition:color .15s;}
+.footer-link:hover{color:#888;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .hero-inner{grid-template-columns:1fr;gap:48px;}
+  .hero-right{display:none;}
+  .features-grid{grid-template-columns:1fr 1fr;}
+  .method-grid{grid-template-columns:1fr 1fr;}
+  .how-grid{grid-template-columns:1fr 1fr;gap:32px;}
+  .how-grid::before{display:none;}
+  .stats-inner{grid-template-columns:1fr 1fr;}
+  .stat-item:nth-child(2){border-right:none;}
+  .stat-item:nth-child(3){border-top:1px solid var(--border);border-right:1px solid var(--border);}
+  .stat-item:nth-child(4){border-top:1px solid var(--border);}
+}
+@media(max-width:600px){
+  .features-grid{grid-template-columns:1fr;}
+  .method-grid{grid-template-columns:1fr;}
+  .header-nav{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-brand">
+    <div class="hlogo">F</div>
+    <div class="hname">Orquestador Docente <span>· Análisis Financiero con IA</span></div>
+  </div>
+  <nav class="header-nav">
+    <a href="#metodologia" class="hnav-link">Metodología</a>
+    <a href="#como-funciona" class="hnav-link">Cómo funciona</a>
+    <a href="#certificaciones" class="hnav-link">Certificaciones</a>
+    <a href="orquestador-mvp-v2.html" class="hnav-cta" target="_blank">Abrir Orquestador →</a>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-left">
+      <div class="hero-eyebrow">
+        <span class="hero-eyebrow-dot"></span>
+        MVP · Labs 7–9 Certificados · ADVANCE
+      </div>
+      <h1 class="hero-title">
+        Análisis Financiero<br>
+        <em>con Inteligencia</em><br>
+        Artificial
+      </h1>
+      <p class="hero-subtitle">Estado de Resultados · Metodología PUC Colombiano</p>
+      <p class="hero-desc">
+        Multi-Agente especializado en análisis financiero para posgrado. Procesa Balances de Prueba reales (ERP/SIIGO), aplica la metodología de los Laboratorios 7 al 9 y genera entregables ejecutivos listos para el aula.
+      </p>
+      <div class="hero-actions">
+        <a href="orquestador-mvp-v2.html" class="btn-primary" target="_blank">
+          🚀 Abrir Orquestador
+        </a>
+        <a href="#metodologia" class="btn-outline">
+          Ver metodología ↓
+        </a>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="pipeline-card">
+        <div class="pipeline-title">Pipeline Certificado</div>
+        <div class="pipeline-items">
+          <div class="pipeline-item certified">
+            <div class="pi-num">7</div>
+            <div class="pi-info">
+              <span class="pi-name">ER — Cálculos Base</span>
+              <span class="pi-desc">Ingresos · Costos · Gastos · D&A · Impuestos</span>
+            </div>
+            <span class="pi-badge">✓ Cert.</span>
+          </div>
+          <div class="pipeline-item certified">
+            <div class="pi-num">8</div>
+            <div class="pi-info">
+              <span class="pi-name">ER — KPIs Rentabilidad</span>
+              <span class="pi-desc">MB · EBITDA · EBIT · EBT · Margen Neto</span>
+            </div>
+            <span class="pi-badge">✓ Cert.</span>
+          </div>
+          <div class="pipeline-item certified">
+            <div class="pi-num">9</div>
+            <div class="pi-info">
+              <span class="pi-name">ER — Insights</span>
+              <span class="pi-desc">Top 10 · 6 dígitos · Resumen Ejecutivo</span>
+            </div>
+            <span class="pi-badge">✓ Cert.</span>
+          </div>
+          <div class="pipeline-item certified">
+            <div class="pi-num">7–9</div>
+            <div class="pi-info">
+              <span class="pi-name">ER Completo</span>
+              <span class="pi-desc">Pipeline integral · Labs 7 + 8 + 9</span>
+            </div>
+            <span class="pi-badge">✓ Cert.</span>
+          </div>
+          <div class="pipeline-item pending">
+            <div class="pi-num">10</div>
+            <div class="pi-info">
+              <span class="pi-name">ESF — Cálculos Base</span>
+              <span class="pi-desc">Activos · Pasivos · Patrimonio</span>
+            </div>
+            <span class="pi-badge">Próximo</span>
+          </div>
+          <div class="pipeline-item pending">
+            <div class="pi-num">11</div>
+            <div class="pi-info">
+              <span class="pi-name">ESF — KPIs</span>
+              <span class="pi-desc">Liquidez · Endeudamiento · Eficiencia</span>
+            </div>
+            <span class="pi-badge">Próximo</span>
+          </div>
+          <div class="pipeline-item pending">
+            <div class="pi-num">12</div>
+            <div class="pi-info">
+              <span class="pi-name">ESF — Insights</span>
+              <span class="pi-desc">Top 10 · Comparativo YoY</span>
+            </div>
+            <span class="pi-badge">Próximo</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stats-inner">
+    <div class="stat-item">
+      <span class="stat-num">4</span>
+      <span class="stat-label">Módulos Certificados</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">38</span>
+      <span class="stat-label">Checks de Auditoría</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">2</span>
+      <span class="stat-label">Períodos Comparados</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">PUC</span>
+      <span class="stat-label">Plan de Cuentas Colombia</span>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section class="section" id="como-funciona">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="section-eyebrow">Capacidades del Orquestador</div>
+      <h2 class="section-title">Todo lo que necesita para el análisis financiero en el aula</h2>
+      <p class="section-desc">Diseñado para docentes de posgrado y profesionales financieros. Sin conocimientos técnicos requeridos — solo suba su Balance de Prueba.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="fc-icon" style="background:#fde8eb">📊</div>
+        <div class="fc-title">Carga de Balance de Prueba</div>
+        <p class="fc-desc">Soporta archivos Excel de cualquier ERP o SIIGO. Detecta automáticamente la columna "Nuevo Saldo Final" o aplica la transformación PUC si el archivo es sin transformar.</p>
+        <span class="fc-tag" style="background:#fde8eb;color:#9e0d24">XLSX · XLS · CSV</span>
+      </div>
+      <div class="feature-card">
+        <div class="fc-icon" style="background:#d4edda">📈</div>
+        <div class="fc-title">Cálculos Base del ER (Lab 7)</div>
+        <p class="fc-desc">8 rubros certificados: Ingresos Op., Ingresos No Op., Costos de Venta, Gastos Adm., Gastos Ventas, D&A, Gastos No Op. e Impuestos de Renta. Nivel 4 dígitos PUC.</p>
+        <span class="fc-tag" style="background:#d4edda;color:#1a6b3c">✓ Certificado</span>
+      </div>
+      <div class="feature-card">
+        <div class="fc-icon" style="background:#dce8f5">💹</div>
+        <div class="fc-title">KPIs de Rentabilidad (Lab 8)</div>
+        <p class="fc-desc">Margen Bruto, EBITDA, EBIT, EBT y Margen Neto con valor absoluto y % sobre Ingresos Operacionales. Panel consolidado biperiódico con variación YoY.</p>
+        <span class="fc-tag" style="background:#dce8f5;color:#1a4f8a">✓ Certificado</span>
+      </div>
+      <div class="feature-card">
+        <div class="fc-icon" style="background:#fdf0d8">🔍</div>
+        <div class="fc-title">Insights del ER (Lab 9)</div>
+        <p class="fc-desc">Top 10 cuentas a 6 dígitos por cada uno de los 8 rubros. Interpretación ejecutiva por rubro con drivers, concentración y acciones priorizadas.</p>
+        <span class="fc-tag" style="background:#fdf0d8;color:#c4922a">✓ Certificado</span>
+      </div>
+      <div class="feature-card">
+        <div class="fc-icon" style="background:#f3e8ff">📦</div>
+        <div class="fc-title">Exportación Ejecutiva</div>
+        <p class="fc-desc">Genera entregables en Word (.docx), Excel (.xlsx) y PowerPoint (.pptx) directamente desde el navegador, listos para juntas directivas y comités financieros.</p>
+        <span class="fc-tag" style="background:#f3e8ff;color:#7c3aed">Word · Excel · PPT</span>
+      </div>
+      <div class="feature-card">
+        <div class="fc-icon" style="background:#fde8eb">🔒</div>
+        <div class="fc-title">Auditoría y Trazabilidad</div>
+        <p class="fc-desc">Cada módulo fue validado con 38 checks automatizados. Los cálculos son auditables contra el Add-On Excel de Claude. Resultados idénticos garantizados.</p>
+        <span class="fc-tag" style="background:#fde8eb;color:#9e0d24">38/38 Checks</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- METHODOLOGY -->
+<section class="method-section" id="metodologia">
+  <div class="method-inner">
+    <div class="method-header section-header">
+      <div class="section-eyebrow" style="color:var(--rojo)">Metodología</div>
+      <h2 class="section-title">Laboratorios 7 al 12 — Plan de Cuentas PUC Colombia</h2>
+      <p class="section-desc">Cada laboratorio es un módulo independiente y certificado. El pipeline completo cubre el Estado de Resultados (Labs 7–9) y el Estado de Situación Financiera (Labs 10–12).</p>
+    </div>
+    <div class="method-grid">
+      <div class="method-card cert">
+        <div class="mc-lab"><div class="mc-num">7</div>ER · Cálculos Base</div>
+        <div class="mc-title">Estado de Resultados</div>
+        <ul class="mc-items">
+          <li>Transformación "Nuevo Saldo Final"</li>
+          <li>Prefijos PUC: 41, 42, 51–54, 61–74</li>
+          <li>Exclusión D&A de gastos operativos</li>
+          <li>Nivel 4 dígitos · Sumatoria por rubro</li>
+        </ul>
+        <span class="mc-status">✓ Certificado</span>
+      </div>
+      <div class="method-card cert">
+        <div class="mc-lab"><div class="mc-num">8</div>ER · KPIs Rentabilidad</div>
+        <div class="mc-title">5 Indicadores Clave</div>
+        <ul class="mc-items">
+          <li>Margen Bruto = IO − Costos</li>
+          <li>EBITDA = IO − Costos − Adm − Vtas</li>
+          <li>EBIT = EBITDA − D&A</li>
+          <li>EBT · Margen Neto · % sobre IO</li>
+        </ul>
+        <span class="mc-status">✓ Certificado</span>
+      </div>
+      <div class="method-card cert">
+        <div class="mc-lab"><div class="mc-num">9</div>ER · Insights</div>
+        <div class="mc-title">Top 10 por Rubro</div>
+        <ul class="mc-items">
+          <li>Nivel 6 dígitos · 8 rubros</li>
+          <li>Excl. 5160/5165/5260/5265 de G.Op</li>
+          <li>Interpretación ejecutiva por rubro</li>
+          <li>Resumen Ejecutivo integrado</li>
+        </ul>
+        <span class="mc-status">✓ Certificado</span>
+      </div>
+      <div class="method-card pend">
+        <div class="mc-lab"><div class="mc-num">10</div>ESF · Cálculos Base</div>
+        <div class="mc-title">Estado Situación Financiera</div>
+        <ul class="mc-items">
+          <li>21 rubros · Nivel 6 dígitos</li>
+          <li>Activos · Pasivos · Patrimonio</li>
+          <li>Identidad contable: TA = TP + Pat</li>
+          <li>Prefijos 11–18, 21–28, 31–37</li>
+        </ul>
+        <span class="mc-status">En desarrollo</span>
+      </div>
+      <div class="method-card pend">
+        <div class="mc-lab"><div class="mc-num">11</div>ESF · KPIs</div>
+        <div class="mc-title">11 Ratios Financieros</div>
+        <ul class="mc-items">
+          <li>Liquidez: RC · Prueba Ácida</li>
+          <li>Endeudamiento: RE · Leverage</li>
+          <li>Rentabilidad: ROA · ROE</li>
+          <li>Eficiencia · Deuda Neta/EBITDA</li>
+        </ul>
+        <span class="mc-status">En desarrollo</span>
+      </div>
+      <div class="method-card pend">
+        <div class="mc-lab"><div class="mc-num">12</div>ESF · Insights</div>
+        <div class="mc-title">Análisis Estructural</div>
+        <ul class="mc-items">
+          <li>Top 10 · 5 rubros del ESF</li>
+          <li>Comparativo YoY</li>
+          <li>Liquidez · Capital de trabajo</li>
+          <li>Resumen Ejecutivo ESF</li>
+        </ul>
+        <span class="mc-status">En desarrollo</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section" id="certificaciones">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="section-eyebrow">Cómo Usar el Orquestador</div>
+      <h2 class="section-title">4 pasos para obtener su análisis financiero</h2>
+    </div>
+    <div class="how-grid">
+      <div class="how-step">
+        <div class="how-num">1</div>
+        <div class="how-title">Abra el Orquestador</div>
+        <p class="how-desc">Haga clic en "Abrir Orquestador" y acceda directamente desde el navegador. Sin instalación, sin registro.</p>
+      </div>
+      <div class="how-step">
+        <div class="how-num">2</div>
+        <div class="how-title">Cargue su BP</div>
+        <p class="how-desc">Suba su archivo Excel (Balance de Prueba ERP o SIIGO). El sistema valida las clases PUC automáticamente.</p>
+      </div>
+      <div class="how-step">
+        <div class="how-num">3</div>
+        <div class="how-title">Seleccione el Análisis</div>
+        <p class="how-desc">Elija Lab 7 (Cálculos), Lab 8 (KPIs), Lab 9 (Insights) o ER Completo desde el árbol de navegación.</p>
+      </div>
+      <div class="how-step">
+        <div class="how-num">4</div>
+        <div class="how-title">Exporte</div>
+        <p class="how-desc">Descargue el entregable en Word, Excel o PowerPoint listo para presentar en clase o ante la junta directiva.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-inner">
+    <h2 class="cta-title">Listo para usar en el aula hoy</h2>
+    <p class="cta-desc">Metodología Labs 7–9 certificada con 38 checks de auditoría. Resultados idénticos al Add-On Excel de Claude. Sin configuración previa.</p>
+    <div class="cta-actions">
+      <a href="orquestador-mvp-v2.html" class="btn-white" target="_blank">🚀 Abrir Orquestador</a>
+      <a href="https://github.com/joseorcasitace/finanzas-ia-advance" class="btn-white-outline" target="_blank">Ver en GitHub →</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="footer-logo">F</div>
+      <div>
+        <div class="footer-text"><strong>Orquestador Docente MVP</strong> · Análisis Financiero con IA</div>
+        <div class="footer-text" style="margin-top:2px">José Orcasita Celedón · ADVANCE · Universidad del Rosario · 2026</div>
+      </div>
+    </div>
+    <div class="footer-links">
+      <a href="orquestador-mvp-v2.html" class="footer-link" target="_blank">Abrir App</a>
+      <a href="https://github.com/joseorcasitace/finanzas-ia-advance" class="footer-link" target="_blank">GitHub</a>
+      <a href="https://joseorcasitace.github.io/finanzas-ia-advance/" class="footer-link" target="_blank">Curso IA Finanzas</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

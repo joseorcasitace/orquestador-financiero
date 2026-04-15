@@ -1,0 +1,71 @@
+AUDITORIA ACUMULADA — ER Completo + Labs 7, 8, 9
+Fecha: 2026-04-15 02:30
+Archivo: orquestador-mvp-v2.html | 106.0KB
+Resultado: APROBADA 100% (38/38 checks)
+
+CHECKS:
+  PASS | er_completo prompt presente
+  PASS | er_completo referencia Lab 7
+  PASS | er_completo referencia Lab 8
+  PASS | er_completo referencia Lab 9
+  PASS | er_completo secuencia obligatoria
+  PASS | er_completo Resumen Ejecutivo final
+  PASS | Lab 9 prefijo 41
+  PASS | Lab 9 prefijo 42
+  PASS | Lab 9 costos 61-74
+  PASS | Lab 9 G.Adm excl 5160/5165
+  PASS | Lab 9 G.Vtas excl 5260/5265
+  PASS | Lab 9 D&A 5160/5165/5260/5265
+  PASS | Lab 9 prefijo 53 y 54
+  PASS | Lab 9 nivel 6 digitos
+  PASS | Lab 9 Top 10
+  PASS | Lab 9 Resumen Ejecutivo
+  PASS | Lab 8 max_tokens 8192
+  PASS | Lab 8 panel consolidado PRIMERO
+  PASS | Lab 8 stop_reason handler
+  PASS | Lab 8 formulas EBITDA
+  PASS | Lab 7 REGLA CRITICA blindada
+  PASS | Lab 7 applyTransform NSF/SaldoFinal
+  PASS | Lab 7 NSF column detection
+  PASS | Lab 7 NO re-transformar prompt
+  PASS | Lab 7 costos 61-74 excl DA
+  PASS | Lab 7 prefijo 51 excl DA
+  PASS | Lab 7 prefijo 54 impuestos
+  PASS | anthropic-version header
+  PASS | anthropic-dangerous-direct-browser
+  PASS | JSON.stringify protegido
+  PASS | normalizeMsg presente
+  PASS | sanitize presente
+  PASS | activeBPData en estado
+  PASS | buildSys inyecta BP context
+  PASS | Sin limite filas (no 120/8000)
+  PASS | Repositorio oculto
+  PASS | extractAndValidateBP presente
+  PASS | Node.js syntax PASSED
+
+PROMPT CERTIFICADO er_completo:
+er_completo:`Ejecuta el análisis COMPLETO del Estado de Resultados (Laboratorios 7 + 8 + 9).
+
+SECUENCIA OBLIGATORIA:
+FASE 1 — Lab 7: Cálculos base (transformación signos → 8 rubros con tablas a 4 dígitos)
+FASE 2 — Lab 8: 5 KPIs de rentabilidad (tablas + sumatorias + % + panel consolidado)
+FASE 3 — Lab 9: Insights Top 10 por rubro a 6 dígitos (8 tablas + interpretación por rubro)
+FASE 4: Resumen Ejecutivo integrado (foto ER + KPIs + insights + acciones priorizadas impacto vs factibilidad)`,
+
+PIPELINE — ESTADO DE CERTIFICACIONES:
+  Lab 7       (ER Calculos Base)      -> CERTIFICADO  [2026-04-15]
+  Lab 8       (ER KPIs Rentabilidad)  -> CERTIFICADO  [2026-04-15]
+  Lab 9       (ER Insights)           -> CERTIFICADO  [2026-04-15]
+  ER Completo (Labs 7+8+9)            -> CERTIFICADO  [2026-04-15]
+  Lab 10      (ESF Calculos Base)     -> PENDIENTE PRUEBA
+  Lab 11      (ESF KPIs)              -> PENDIENTE PRUEBA
+  Lab 12      (ESF Insights)          -> PENDIENTE PRUEBA
+
+REGLAS QUE NO DEBEN MODIFICARSE SIN REVISION:
+  ER COMPLETO:
+  1. Secuencia obligatoria: FASE1=Lab7 → FASE2=Lab8 → FASE3=Lab9 → Resumen Ejecutivo
+  2. Resumen Ejecutivo integrado al cierre (foto ER + KPIs + insights + acciones)
+  LAB 9: nivel 6 digitos | Top10 | excl 5160/5165/5260/5265 | D&A independiente
+  LAB 8: max_tokens 8192 | panel consolidado PRIMERO
+  LAB 7: applyTransform NSF logic | NO re-transformar en ningun componente
+  INFRA: anthropic headers | JSON.stringify try/catch | activeBPData persistente
