@@ -1,0 +1,29 @@
+AUDITORIA MVP v7 — Corrección definitiva cuenta 5121
+Fecha: 2026-04-15 14:04
+Archivo: orquestador-mvp-v2.html | 112.3KB
+Resultado: APROBADA 100%
+
+CORRECCION CRITICA v7:
+  La cuenta 5121 "Deterioro de Cuentas por Cobrar" (Deuda difícil cobro)
+  clasificacion INCORRECTA (v5-v6): D&A
+  clasificacion CORRECTA   (v7):    Gastos Op. Administracion (G.Adm)
+
+  Validado contra:
+  - Add-On Claude en Excel MS (referencia principal)
+  - Add-On ChatGPT en Excel MS (confirmacion)
+
+  Valores correctos certificados:
+  2024: G.Adm=$2,460,460,277 | D&A=$233,843,423 | EBITDA=$1,080,051,173 (12.77%) | EBIT=$846,207,750 (10.00%)
+  2025: G.Adm=$3,111,307,866 | D&A=$202,221,262 | EBITDA=$1,531,766,521 (14.20%) | EBIT=$1,329,545,259 (12.32%)
+
+REGLA DEFINITIVA CUENTA 5121:
+  - 5121 Deterioro CxC = gasto operativo administrativo = G.Adm
+  - D&A = SOLO cuentas con nombre DEPRECIACIONES o AMORTIZACIONES
+  - Esta regla esta blindada en: LAB7 MASTER_SYS + er_calculos + VALIDACION PREVIA + Lab9 insights
+
+PIPELINE:
+  Lab 7  (ER Calculos Base)      -> CERTIFICADO [2026-04-15]
+  Lab 8  (ER KPIs Rentabilidad)  -> CERTIFICADO [2026-04-15]
+  Lab 9  (ER Insights)           -> CERTIFICADO [2026-04-15]
+  ER Completo (Labs 7+8+9)       -> CERTIFICADO [2026-04-15]
+  Lab 10-12 (ESF)                -> PENDIENTE
