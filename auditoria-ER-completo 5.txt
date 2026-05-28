@@ -1,0 +1,149 @@
+AUDITORIA MVP v8 — Extension Serie Labs 7-15 (mayo 2026)
+Fecha: 2026-05-27
+Archivo: orquestador-mvp-v2.html | ~130KB
+Resultado: APROBADA para liberacion · Certificaciones Labs 10-15 EN CURSO
+
+════════════════════════════════════════════════════════════════════
+PARTE 1 · CORRECCIONES HEREDADAS (vigentes desde v7)
+════════════════════════════════════════════════════════════════════
+
+CORRECCION CRITICA v7 (preservada en v8):
+  La cuenta 5121 "Deterioro de Cuentas por Cobrar" (Deuda dificil cobro)
+  clasificacion INCORRECTA (v5-v6): D&A
+  clasificacion CORRECTA   (v7+):   Gastos Op. Administracion (G.Adm)
+
+  Validado contra:
+  - Add-On Claude en Excel MS (referencia principal)
+  - Add-On ChatGPT en Excel MS (confirmacion)
+
+  Valores correctos certificados ER (empresa salud):
+  2024: G.Adm=$2,460,460,277 | D&A=$233,843,423 | EBITDA=$1,080,051,173 (12.77%) | EBIT=$846,207,750 (10.00%)
+  2025: G.Adm=$3,111,307,866 | D&A=$202,221,262 | EBITDA=$1,531,766,521 (14.20%) | EBIT=$1,329,545,259 (12.32%)
+
+REGLA DEFINITIVA CUENTA 5121:
+  - 5121 Deterioro CxC = gasto operativo administrativo = G.Adm
+  - D&A = SOLO cuentas con nombre DEPRECIACIONES o AMORTIZACIONES (clases 5, 6, 7)
+  - Esta regla esta blindada en: MASTER_SYS de Labs 7-15
+
+════════════════════════════════════════════════════════════════════
+PARTE 2 · REGLAS NUEVAS BLINDADAS EN MVP v8
+════════════════════════════════════════════════════════════════════
+
+REGLA R4 — Prefijo 55 → Otros Gastos No Operacionales (Lab 7 v3):
+  - El prefijo 55 NO se suma a Impuestos (54).
+  - El prefijo 55 se reclasifica como "Otros Gastos No Operacionales" junto con 53.
+  - Razon: produce tasa efectiva de impuesto tecnicamente correcta + Margen Neto
+    coherente con la practica financiera profesional.
+  - La Utilidad Neta del Lab 7 P8 YA INCORPORA esta reclasificacion.
+  - Heredada INTACTA en Labs 13, 14 y 15.
+
+REGLA R5 — Deuda Neta (definicion certificada Lab 11, usada Labs 13-15):
+  Deuda Neta = Obligaciones Financieras (prefijo 21 PURO) − Efectivo (prefijo 11)
+  NO incluir pasivos operativos (22, 23, 24, 25).
+  Aplica en:
+    - DN/EBITDA, DN/Patrimonio (Lab 11)
+    - Cobertura servicio deuda (Lab 13 P8)
+    - Equity Value = EV − Deuda Neta (Lab 15 P7)
+
+REGLA R6 — FCF vs FCFF:
+  FCF  (Lab 13) = FNO − CAPEX                              (diagnostico)
+  FCFF (Lab 15) = EBIT × (1−T) + D&A − CAPEX − Δ Capital Trabajo  (descuento)
+
+REGLA R13 — Parametros de mercado DCF (Mayo 2026):
+  Rf  = 4.25%   (UST 10Y, Damodaran ene 2026)
+  ERP = 4.23%   (S&P 500 Implied ERP, Damodaran ene 2026)
+  CRP = 2.85%   (Country Risk Premium Colombia, Moody's Baa2)
+  beta = 0.85   (Beta apalancado Food Processing, Damodaran)
+  TIB = 11.25%  (Banrep 31-mar-2026, subio 100 pbs)
+  T   = 35%     (Tasa impuestos efectiva Colombia)
+  g   = 3.0%    (Crecimiento perpetuo Gordon, ~ meta inflacion Banrep)
+
+REGLA R14 — Supuestos macro Lab 14 (mayo 2026):
+  Anio    | PIB  | IPC  | TIB    | DTF    | TRM   | Sector lacteo
+  2024    | 1.7% | 5.2% | 9.50%  | 9.75%  | 4,070 | 0.9%
+  2025    | 2.6% | 5.1% | 9.25%  | 9.50%  | 4,200 | 3.5%
+  2026    | 2.4% | 6.4% | 10.25% | 10.50% | 4,150 | 3.5%
+  2027    | 2.5% | 4.0% | 8.50%  | 8.75%  | 4,000 | 3.5%
+  2028    | 2.8% | 3.2% | 7.00%  | 7.25%  | 3,950 | 3.5%
+  Fuentes: Banrep, FMI Art. IV, DNP, Bancolombia, Asoleche, OCILAC.
+
+════════════════════════════════════════════════════════════════════
+PIPELINE DE CERTIFICACIONES — ESTADO AL 27-MAY-2026
+════════════════════════════════════════════════════════════════════
+
+[BLOQUE A · ESTADO DE RESULTADOS]
+  Lab 7   (ER Calculos Base)      -> CERTIFICADO [2026-04-15]    [8/8 checks]
+  Lab 8   (ER KPIs Rentabilidad)  -> CERTIFICADO [2026-04-15]    [5/5 checks]
+  Lab 9   (ER Insights)           -> CERTIFICADO [2026-04-15]    [11/11 checks]
+  ER Completo (Labs 7+8+9)        -> CERTIFICADO [2026-04-15]    [38/38 checks]
+
+[BLOQUE B · ESTADO DE SITUACION FINANCIERA]
+  Lab 10  (ESF Calculos Base)     -> IMPLEMENTADO · pendiente certificacion
+  Lab 11  (ESF KPIs 11 ratios)    -> IMPLEMENTADO · pendiente certificacion
+  Lab 12  (ESF Insights)          -> IMPLEMENTADO · pendiente certificacion
+  ESF Completo (Labs 10+11+12)    -> IMPLEMENTADO · pendiente certificacion
+
+[BLOQUE C · FLUJO DE EFECTIVO]                          [NUEVO MVP v8]
+  Lab 13  (EFE Indirecto+Directo) -> IMPLEMENTADO · pendiente certificacion
+    Validaciones requeridas: V1-V5 (incluye convergencia Indirecto = Directo)
+
+[BLOQUE D · PROYECCION FINANCIERA]                      [NUEVO MVP v8]
+  Lab 14  (Proyeccion 5 anios+VT) -> IMPLEMENTADO · pendiente certificacion
+    Driver-Based Hybrid, 7 palancas, 3 escenarios (Pesim/Base/Optim)
+    Validaciones requeridas: V1-V5 (incluye DSCR >= 1.2x y caja minima)
+
+[BLOQUE E · VALORACION DCF]                             [NUEVO MVP v8]
+  Lab 15  (DCF CAPM+WACC+Gordon)  -> IMPLEMENTADO · pendiente certificacion
+    CAPM ajustado por riesgo pais (Rf + beta x ERP + CRP)
+    WACC distinto por escenario
+    3 matrices sensibilidad: WACC x g, WACC x Crec, WACC x Margen
+    Validaciones requeridas: V1-V5 (incluye Kd*(1-T) < WACC < Ke, VT/EV en 60-75%)
+
+════════════════════════════════════════════════════════════════════
+CAMBIOS TECNICOS EN MVP v8 (vs v7)
+════════════════════════════════════════════════════════════════════
+
+1. MASTER_SYS extendido con metodologia Labs 13, 14 y 15 verbatim.
+2. Nuevas opciones en modal y arbol: efe, proyeccion_5y, dcf, integral (Labs 7-15).
+3. max_tokens aumentado a 16384 para Labs 13-15
+   (matrices 5 anios x 3 escenarios y sensibilidades 6x6 lo requieren).
+4. validateBPForAnalysis() actualizado: Labs 13-15 requieren DOS periodos en clases 1, 2, 3.
+5. analisisPrompts ampliado con 5 entradas nuevas:
+   - efe (Lab 13)
+   - proyeccion (Lab 14)
+   - dcf (Lab 15)
+   - esf_completo (Labs 10+11+12)
+   - integral_full (Labs 7-15)
+6. Parametros R13 (DCF) y R14 (macro) embebidos en MASTER_SYS para evitar
+   que el agente improvise valores.
+7. Header del HTML actualizado: badge "Labs 7-15 · ADVANCE" (antes "Labs 7-12").
+8. Version: hver muestra "MVP v8" (antes "MVP v7").
+
+════════════════════════════════════════════════════════════════════
+PROXIMOS HITOS DE CERTIFICACION
+════════════════════════════════════════════════════════════════════
+
+Hito 1 (junio 2026):
+  - Validar Labs 10-12 contra Add-On Excel con BP de 2 periodos.
+  - Cerrar identidad contable V1 (TA = TP + TPat) con < 0.01% TA.
+  - Confirmar 11 ratios Lab 11 verbatim.
+
+Hito 2 (julio 2026):
+  - Validar Lab 13 con convergencia V3 (Indirecto = Directo)
+    y V4 (= Δ Efectivo del ESF).
+  - Probar diagnostico calidad FNO (ALTA/MEDIA/BAJA).
+
+Hito 3 (agosto 2026):
+  - Validar Lab 14 con las 5 validaciones por anio (V1-V5) en los 3 escenarios.
+  - Confirmar restriccion VT <= 70% EV implicito.
+  - Verificar coherencia macro vs micro (crec empresa <= 2x sector).
+
+Hito 4 (septiembre 2026):
+  - Validar Lab 15 con coherencia de tasas Kd(1-T) < WACC < Ke.
+  - Confirmar VT/EV en banda 60-75%.
+  - Triangular con EV/EBITDA sectorial (4x-9x lacteo).
+  - Construir las 3 matrices de sensibilidad y verificar interpretacion.
+
+════════════════════════════════════════════════════════════════════
+AUDITORIA APROBADA · MVP v8 LISTO PARA DESPLIEGUE GITHUB PAGES
+════════════════════════════════════════════════════════════════════
