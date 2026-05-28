@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="refresh" content="0; url=./orquestador-mvp-v2.html">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orquestador Financiero · ADVANCE · Universidad del Rosario</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:linear-gradient(135deg,#F2F0EE 0%,#fff 100%);
+  color:#1a1614;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  -webkit-text-size-adjust:100%;
+}
+.card{
+  background:white;
+  border-radius:16px;
+  box-shadow:0 10px 40px rgba(0,0,0,.08);
+  padding:48px 40px;
+  max-width:560px;
+  width:100%;
+  text-align:center;
+  border-top:4px solid #C8102E;
+}
+.logo{
+  width:64px;
+  height:64px;
+  background:#C8102E;
+  border-radius:12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:'DM Serif Display',serif;
+  font-size:32px;
+  color:white;
+  margin:0 auto 24px;
+  box-shadow:0 4px 12px rgba(200,16,46,.25);
+}
+h1{
+  font-family:'DM Serif Display',serif;
+  font-size:32px;
+  font-weight:400;
+  margin-bottom:8px;
+  letter-spacing:-.5px;
+}
+.subtitle{
+  font-size:14px;
+  color:#6b6560;
+  margin-bottom:32px;
+  font-weight:500;
+}
+.badge-row{
+  display:flex;
+  justify-content:center;
+  gap:8px;
+  margin-bottom:32px;
+  flex-wrap:wrap;
+}
+.badge{
+  background:#fde8eb;
+  color:#9e0d24;
+  padding:4px 10px;
+  border-radius:12px;
+  font-size:11px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+}
+.badge.blue{background:#dce8f5;color:#1a4f8a;}
+.badge.gold{background:#fdf0d8;color:#c4922a;}
+.spinner{
+  width:32px;
+  height:32px;
+  border:3px solid #f0eeec;
+  border-top-color:#C8102E;
+  border-radius:50%;
+  animation:spin .8s linear infinite;
+  margin:0 auto 16px;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loading-text{
+  font-size:13px;
+  color:#6b6560;
+  margin-bottom:24px;
+}
+.cta{
+  display:inline-block;
+  background:#C8102E;
+  color:white;
+  text-decoration:none;
+  padding:12px 28px;
+  border-radius:8px;
+  font-weight:600;
+  font-size:14px;
+  transition:all .2s;
+  margin-top:8px;
+}
+.cta:hover{background:#9e0d24;transform:translateY(-1px);box-shadow:0 4px 12px rgba(200,16,46,.3);}
+.footer{
+  margin-top:32px;
+  padding-top:24px;
+  border-top:1px solid #e0ddd9;
+  font-size:11px;
+  color:#888;
+  line-height:1.6;
+}
+.footer a{color:#1a4f8a;text-decoration:none;}
+.footer a:hover{text-decoration:underline;}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">F</div>
+  <h1>Orquestador Financiero</h1>
+  <div class="subtitle">Análisis Financiero Consultivo con IA</div>
+  <div class="badge-row">
+    <span class="badge">MVP v8</span>
+    <span class="badge blue">Labs 7–15</span>
+    <span class="badge gold">ADVANCE · U. Rosario</span>
+  </div>
+  <div class="spinner"></div>
+  <div class="loading-text">Cargando la aplicación...</div>
+  <a class="cta" href="./orquestador-mvp-v2.html">Ir a la app manualmente →</a>
+  <div class="footer">
+    Posgrado en Finanzas · ADVANCE · Universidad del Rosario<br>
+    Docente: José Orcasita Celedón<br>
+    <a href="https://github.com/joseorcasitace/orquestador-financiero">Repositorio GitHub</a>
+  </div>
+</div>
+</body>
+</html>
