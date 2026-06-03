@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multi-Agente FP&A+V · ADVANCE · Universidad del Rosario</title>
+<meta name="description" content="Herramienta de análisis financiero con IA basada en Labs 7-15. Procesa Balances de Prueba reales y genera análisis ejecutivos: ER, ESF, EFE, Proyección y Valoración DCF. PUC colombiano.">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --rojo:#C8102E;--rojo-d:#9e0d24;--rojo-l:#fde8eb;
+  --bg:#F2F0EE;--white:#fff;--text:#1a1614;--muted:#6b6560;
+  --border:#e0ddd9;--gold:#c4922a;--blue:#1a4f8a;--green:#1a6b3c;
+  --dk:#12100e;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;}
+a{color:inherit;text-decoration:none;}
+
+/* ── NAV ── */
+nav{background:var(--dk);padding:0 5%;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:3px solid var(--rojo);}
+.nav-l{display:flex;align-items:center;gap:10px;}
+.nav-logo{width:32px;height:32px;background:var(--rojo);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:18px;color:white;}
+.nav-title{font-size:14px;font-weight:600;color:white;}
+.nav-title span{color:#888;font-weight:300;}
+.nav-badge{background:var(--rojo);color:white;font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;letter-spacing:.05em;}
+.nav-r{display:flex;gap:8px;}
+.nav-btn{padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;}
+.nav-btn.outline{background:transparent;color:white;border:1px solid #444;}
+.nav-btn.primary{background:var(--rojo);color:white;}
+
+/* ── HERO ── */
+.hero{background:var(--dk);padding:80px 5% 70px;text-align:center;}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(200,16,46,.15);border:1px solid rgba(200,16,46,.4);border-radius:20px;padding:4px 14px;font-size:11px;font-weight:600;color:#ff8fa3;margin-bottom:22px;letter-spacing:.04em;}
+.hero h1{font-family:'DM Serif Display',serif;font-size:clamp(30px,5vw,52px);color:white;line-height:1.15;margin-bottom:16px;max-width:780px;margin-left:auto;margin-right:auto;}
+.hero h1 em{color:var(--rojo);font-style:normal;}
+.hero p{font-size:clamp(13px,2vw,16px);color:#999;max-width:600px;margin:0 auto 32px;line-height:1.7;}
+.hero-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+.btn-hero{padding:14px 28px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;transition:all .2s;}
+.btn-hero.primary{background:var(--rojo);color:white;}
+.btn-hero.primary:hover{background:var(--rojo-d);transform:translateY(-1px);}
+.btn-hero.outline{background:transparent;color:white;border:1.5px solid #444;}
+.btn-hero.outline:hover{border-color:white;}
+.hero-note{font-size:11px;color:#555;margin-top:16px;}
+
+/* ── AUDIT STRIP ── */
+.audit-strip{background:#0d2b1a;border-top:1px solid #1a4f2a;border-bottom:1px solid #1a4f2a;padding:12px 5%;display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap;}
+.audit-item{display:flex;align-items:center;gap:6px;font-size:11px;color:#4ade80;font-weight:600;}
+.audit-sep{width:1px;height:14px;background:#1a4f2a;}
+
+/* ── SECTION ── */
+section{padding:64px 5%;}
+.section-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--rojo);margin-bottom:10px;}
+.section-title{font-family:'DM Serif Display',serif;font-size:clamp(22px,3.5vw,36px);margin-bottom:12px;}
+.section-sub{font-size:14px;color:var(--muted);max-width:560px;line-height:1.7;}
+
+/* ── LABS GRID ── */
+.labs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:36px;}
+.lab-card{background:white;border:1px solid var(--border);border-radius:12px;padding:18px;transition:all .2s;}
+.lab-card:hover{border-color:var(--rojo);box-shadow:0 4px 20px rgba(200,16,46,.1);}
+.lab-num{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:4px;display:inline-block;margin-bottom:10px;}
+.lab-ico{font-size:20px;margin-bottom:6px;}
+.lab-title{font-size:13px;font-weight:700;margin-bottom:4px;}
+.lab-desc{font-size:11px;color:var(--muted);line-height:1.5;}
+.lab-status{font-size:9px;font-weight:700;margin-top:8px;padding:2px 7px;border-radius:4px;display:inline-block;}
+
+/* ── RULES SECTION ── */
+.rules-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;margin-top:28px;}
+.rule-card{background:white;border:1px solid var(--border);border-radius:10px;padding:16px;}
+.rule-tag{font-size:10px;font-weight:700;color:var(--rojo);background:var(--rojo-l);padding:2px 8px;border-radius:4px;display:inline-block;margin-bottom:8px;}
+.rule-title{font-size:12px;font-weight:700;margin-bottom:4px;}
+.rule-body{font-size:11px;color:var(--muted);line-height:1.5;font-family:monospace;}
+
+/* ── DATASETS ── */
+.datasets{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-top:28px;}
+.ds-card{background:white;border:1px solid var(--border);border-radius:12px;padding:20px;}
+.ds-badge{font-size:9px;font-weight:700;text-transform:uppercase;padding:3px 8px;border-radius:4px;margin-bottom:10px;display:inline-block;}
+.ds-title{font-size:14px;font-weight:700;margin-bottom:4px;}
+.ds-sub{font-size:11px;color:var(--muted);margin-bottom:12px;}
+.ds-kpis{display:flex;flex-direction:column;gap:4px;}
+.ds-kpi{display:flex;justify-content:space-between;font-size:11px;padding:4px 0;border-bottom:1px solid var(--bg);}
+.ds-kpi:last-child{border-bottom:none;}
+.ds-kpi-l{color:var(--muted);}
+.ds-kpi-v{font-weight:600;}
+
+/* ── STEPS ── */
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:28px;}
+.step{background:white;border:1px solid var(--border);border-radius:12px;padding:20px;position:relative;}
+.step-n{width:28px;height:28px;background:var(--rojo);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:12px;font-weight:700;margin-bottom:12px;}
+.step-title{font-size:13px;font-weight:700;margin-bottom:4px;}
+.step-body{font-size:11px;color:var(--muted);line-height:1.5;}
+
+/* ── CTA ── */
+.cta{background:var(--dk);text-align:center;padding:72px 5%;}
+.cta h2{font-family:'DM Serif Display',serif;font-size:clamp(22px,3.5vw,36px);color:white;margin-bottom:12px;}
+.cta p{font-size:14px;color:#888;margin-bottom:28px;}
+
+/* ── FOOTER ── */
+footer{background:#0a0908;padding:28px 5%;border-top:1px solid #1a1614;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+.footer-l{font-size:11px;color:#555;}
+.footer-r{display:flex;gap:14px;}
+.footer-link{font-size:11px;color:#555;}
+.footer-link:hover{color:#888;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:640px){
+  .hero{padding:48px 5%;}
+  .hero-btns{flex-direction:column;align-items:center;}
+  .audit-strip{gap:8px;}
+  .audit-sep{display:none;}
+  footer{flex-direction:column;text-align:center;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-l">
+    <div class="nav-logo">F</div>
+    <div class="nav-title">Multi-Agente FP&A+V <span>· ADVANCE</span></div>
+    <span class="nav-badge">v11</span>
+  </div>
+  <div class="nav-r">
+    <a href="https://github.com/joseorcasitace/orquestador-financiero" target="_blank">
+      <button class="nav-btn outline">GitHub</button>
+    </a>
+    <a href="multi-agente-fpav.html">
+      <button class="nav-btn primary">Abrir App →</button>
+    </a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">🎓 ADVANCE · Universidad del Rosario · Junio 2026</div>
+  <h1>Análisis financiero profesional con <em>IA certificada</em></h1>
+  <p>Sube tu Balance de Prueba (cualquier ERP colombiano) y obtén en segundos el ER, ESF, EFE, Proyección a 5 años y Valoración DCF. Motor inferencial algebraico que funciona con cualquier BP sin importar el nombre de columna.</p>
+  <div class="hero-btns">
+    <a href="multi-agente-fpav.html">
+      <button class="btn-hero primary">🚀 Abrir Orquestador</button>
+    </a>
+    <a href="https://github.com/joseorcasitace/orquestador-financiero" target="_blank">
+      <button class="btn-hero outline">Ver en GitHub</button>
+    </a>
+  </div>
+  <div class="hero-note">Sin servidor · Sin instalación · Exporta en Word, Excel y PowerPoint</div>
+</div>
+
+<!-- AUDIT STRIP -->
+<div class="audit-strip">
+  <div class="audit-item">✅ Labs 7-9 Certificados (Abr 2026)</div>
+  <div class="audit-sep"></div>
+  <div class="audit-item">🔜 Labs 10-15 En certificación</div>
+  <div class="audit-sep"></div>
+  <div class="audit-item">✅ 3 datasets auditados (Jun 2026)</div>
+  <div class="audit-sep"></div>
+  <div class="audit-item">✅ C5 Hoja PUC · C1 Suma Cero · C2 Coherencia</div>
+</div>
+
+<!-- LABS -->
+<section>
+  <div class="section-label">Metodología</div>
+  <div class="section-title">Serie completa Labs 7 – 15</div>
+  <div class="section-sub">Cadena metodológica certificada. Cada Lab hereda los resultados del anterior — sin recalcular, sin inconsistencias.</div>
+  <div class="labs-grid">
+    <div class="lab-card">
+      <span class="lab-num" style="background:#fde8eb;color:#9e0d24">Lab 7</span>
+      <div class="lab-ico">📈</div>
+      <div class="lab-title">ER Cálculos Base</div>
+      <div class="lab-desc">8 rubros PUC. Ingresos, Costos, Gastos, D&A, Impuestos. Reglas R2, R3, R4.</div>
+      <span class="lab-status" style="background:#d4edda;color:#1a6b3c">✅ Certificado</span>
+    </div>
+    <div class="lab-card">
+      <span class="lab-num" style="background:#fde8eb;color:#9e0d24">Lab 8</span>
+      <div class="lab-ico">📊</div>
+      <div class="lab-title">KPIs Rentabilidad</div>
+      <div class="lab-desc">Margen Bruto, EBITDA, EBIT, EBT, Margen Neto. Panel consolidado.</div>
+      <span class="lab-status" style="background:#d4edda;color:#1a6b3c">✅ Certificado</span>
+    </div>
+    <div class="lab-card">
+      <span class="lab-num" style="background:#fde8eb;color:#9e0d24">Lab 9</span>
+      <div class="lab-ico">🔍</div>
+      <div class="lab-title">Insights del ER</div>
+      <div class="lab-desc">Top 10 cuentas a 6 dígitos por rubro. Interpretación ejecutiva C-Level.</div>
+      <span class="lab-status" style="background:#d4edda;color:#1a6b3c">✅ Certificado</span>
+    </div>
+    <div class="lab-card">
+      <span class="lab-num" style="background:#dce8f5;color:#1a4f8a">Lab 10</span>
+      <div class="lab-ico">🏦</div>
+      <div class="lab-title">ESF Cálculos</div>
+      <div class="lab-desc">21 rubros, identidad contable V1. Activos, Pasivos, Patrimonio a 6 dígitos.</div>
+      <span class="lab-status" style="background:#fff3cd;color:#856404">🔜 En certificación</span>
+    </div>
+    <div class="lab-card">
+      <span class="lab-num" style="background:#dce8f5;color:#1a4f8a">Lab 11</span>
+      <div class="lab-ico">📉</div>
+      <div class="lab-title">KPIs ESF</div>
+      <div class="lab-desc">11 ratios: RC, PA, Endeud., Lev., ROA, ROE, Rotación, DN/EBITDA.</div>
+      <span class="lab-status" style="background:#fff3cd;color:#856404">🔜 En certificación</span>
+    </div>
+    <div class="lab-card">
+      <span class="lab-num" style="background:#dce8f5;color:#1a4f8a">Lab 12</span>
+      <div class="lab-ico">💡</div>
+      <div class="lab-title">Insights ESF</div>
+      <div class="lab-desc">Top 10 por 5 rubros a 6 dígitos. Comparativo YoY con señales de alerta.</div>
+      <span class="lab-status" style="background:#fff3cd;color:#856404">🔜 En certificación</span>
+    </div>
+    <div class="lab-card">
+      <span class="lab-num" style="background:#d4edda;color:#1a6b3c">Lab 13</span>
+      <div class="lab-ico">💧</div>
+      <div class="lab-title">EFE</div>
+      <div class="lab-desc">Método indirecto + directo. FCF, DSCR, 5 validaciones. V4 convergencia con ESF.</div>
+      <span class="lab-status" style="background:#fff3cd;color:#856404">🔜 En certificación</span>
+    </div>
+    <div class="lab-card">
+      <span class="lab-num" style="background:#fdf0d8;color:#c4922a">Lab 14</span>
+      <div class="lab-ico">📊</div>
+      <div class="lab-title">Proyección 5 años</div>
+      <div class="lab-desc">Driver-Based Hybrid. 7 palancas. 3 escenarios. Valor Terminal Gordon Growth.</div>
+      <span class="lab-status" style="background:#fff3cd;color:#856404">🔜 En certificación</span>
+    </div>
+    <div class="lab-card">
+      <span class="lab-num" style="background:#fdf0d8;color:#c4922a">Lab 15</span>
+      <div class="lab-ico">💎</div>
+      <div class="lab-title">Valoración DCF</div>
+      <div class="lab-desc">CAPM + CRP Colombia. WACC por escenario. EV, Equity Value, 3 matrices sensibilidad.</div>
+      <span class="lab-status" style="background:#fff3cd;color:#856404">🔜 En certificación</span>
+    </div>
+  </div>
+</section>
+
+<!-- REGLAS CRITICAS -->
+<section style="background:white;border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+  <div class="section-label">Motor de cálculo</div>
+  <div class="section-title">Motor inferencial v11 + reglas blindadas</div>
+  <div class="section-sub">El motor C1-C5 elimina doble conteo jerárquico, decide la ruta algebraicamente y verifica la identidad contable antes del primer KPI. Funciona con cualquier ERP colombiano.</div>
+  <div class="rules-grid">
+    <div class="rule-card" style="border-color:#1a4f8a;">
+      <span class="rule-tag" style="background:#dce8f5;color:#1a4f8a;">C1 · Suma cero ★ v11</span>
+      <div class="rule-title">Decisión de ruta algebraica</div>
+      <div class="rule-body">Lee saldos crudos. Si |∑clases1-7| &lt; 0.5% activos → RUTA A (transformar). Si no → RUTA B (usar directo). Sin depender del nombre de columna.</div>
+    </div>
+    <div class="rule-card" style="border-color:#1a4f8a;">
+      <span class="rule-tag" style="background:#dce8f5;color:#1a4f8a;">C2 · Coherencia ★ v11</span>
+      <div class="rule-title">Verificación de signos post-ruta</div>
+      <div class="rule-body">Todos los rubros deben ser positivos después de la decisión de ruta. Si alguna clase suma negativo → alerta antes de calcular.</div>
+    </div>
+    <div class="rule-card" style="border-color:#1a4f8a;">
+      <span class="rule-tag" style="background:#dce8f5;color:#1a4f8a;">C3 · Identidad ★ v11</span>
+      <div class="rule-title">Control contable preliminar</div>
+      <div class="rule-body">Verifica TA ≈ TP+TPat (V.ESF) y Resultado ≈ IO−Egresos (V.ER) antes del primer KPI. Detecta TEI &gt; 100% (anomalía fiscal).</div>
+    </div>
+    <div class="rule-card" style="border-color:#1a4f8a;">
+      <span class="rule-tag" style="background:#dce8f5;color:#1a4f8a;">C4 · Panel audit ★ v11</span>
+      <div class="rule-title">Diagnóstico visible al usuario</div>
+      <div class="rule-body">El modal muestra la tabla C1-C3 por hoja. El usuario valida la decisión de ruta antes de que el agente calcule cualquier KPI.</div>
+    </div>
+    <div class="rule-card">
+      <span class="rule-tag">R1 · RUTA algebraica</span>
+      <div class="rule-title">Test de suma cero (C1)</div>
+      <div class="rule-body">La ruta se decide por propiedad matemática del BP, no por nombre de columna. Funciona con cualquier ERP colombiano.</div>
+    </div>
+    <div class="rule-card">
+      <span class="rule-tag">R2 · 5121</span>
+      <div class="rule-title">Deterioro CxC en G.Adm</div>
+      <div class="rule-body">5121 "Deterioro CxC" → G.Adm SIEMPRE<br>NUNCA en D&A.<br>Validado: Add-On Claude + ChatGPT Excel (abr 2026)</div>
+    </div>
+    <div class="rule-card">
+      <span class="rule-tag">R3 · D&A semántica</span>
+      <div class="rule-title">D&A solo por nombre</div>
+      <div class="rule-body">D&A = cuentas con nombre DEPRECIACIONES o AMORTIZACIONES<br>Búsqueda en 511x–517x.<br>NO incluir Deterioro, Provisión, Reserva.</div>
+    </div>
+    <div class="rule-card">
+      <span class="rule-tag">R7 · CAPEX</span>
+      <div class="rule-title">CAPEX = Δ PPE bruto solo</div>
+      <div class="rule-body">CAPEX = −(Δ PPE bruto) ÚNICAMENTE.<br>NO sumar D&A al CAPEX.<br>D&A ya está en FNO. Sumarlo = doble conteo.</div>
+    </div>
+  </div>
+</section>
+
+<!-- DATASETS -->
+<section>
+  <div class="section-label">Validación</div>
+  <div class="section-title">Datasets de referencia auditados</div>
+  <div class="section-sub">3 datasets auditados en 3 ambientes (ChatGPT / Claude / Orquestador). BPWOCONSOL_PE es el benchmark de disciplina contable.</div>
+  <div class="datasets">
+    <div class="ds-card" style="border-color:#1a6b3c;">
+      <span class="ds-badge" style="background:#d4edda;color:#1a6b3c;">⭐ BENCHMARK · Lácteo</span>
+      <div class="ds-title">BPWOCONSOL_PE</div>
+      <div class="ds-sub">Empresa sector lácteo · 2022–2023 · PUC completo</div>
+      <div class="ds-kpis">
+        <div class="ds-kpi"><span class="ds-kpi-l">EBITDA 2023</span><span class="ds-kpi-v" style="color:#1a6b3c">$4,241M (12.82%)</span></div>
+        <div class="ds-kpi"><span class="ds-kpi-l">FCF</span><span class="ds-kpi-v" style="color:#1a6b3c">+$2,490M</span></div>
+        <div class="ds-kpi"><span class="ds-kpi-l">GAP V4</span><span class="ds-kpi-v" style="color:#1a6b3c">$0.004M = 0.00% ✅</span></div>
+        <div class="ds-kpi"><span class="ds-kpi-l">DSCR</span><span class="ds-kpi-v" style="color:#c4922a">0.52x ⚠️</span></div>
+        <div class="ds-kpi"><span class="ds-kpi-l">D&A estándar</span><span class="ds-kpi-v">5160/5165/5260 ✅</span></div>
+      </div>
+    </div>
+    <div class="ds-card">
+      <span class="ds-badge" style="background:#dce8f5;color:#1a4f8a;">Salud · COSD</span>
+      <div class="ds-title">BPERPCONSOL_COSD</div>
+      <div class="ds-sub">Empresa sector salud · 2024–2025 · D&A por excepción</div>
+      <div class="ds-kpis">
+        <div class="ds-kpi"><span class="ds-kpi-l">EBITDA 2025</span><span class="ds-kpi-v" style="color:#1a6b3c">$1,532M (14.20%)</span></div>
+        <div class="ds-kpi"><span class="ds-kpi-l">D&A codigos</span><span class="ds-kpi-v">5118 + 5130 (R3 ext.)</span></div>
+        <div class="ds-kpi"><span class="ds-kpi-l">DSCR</span><span class="ds-kpi-v" style="color:#1a6b3c">92.3x ✅</span></div>
+        <div class="ds-kpi"><span class="ds-kpi-l">BP pre-cierre</span><span class="ds-kpi-v" style="color:#c4922a">Detectado (R8) ⚠️</span></div>
+        <div class="ds-kpi"><span class="ds-kpi-l">Prefijo 55</span><span class="ds-kpi-v">$240.8M reclasificado</span></div>
+      </div>
+    </div>
+    <div class="ds-card">
+      <span class="ds-badge" style="background:#fdf0d8;color:#c4922a;">Retail · ADW</span>
+      <div class="ds-title">BPSIIGOCONSOL_ADW</div>
+      <div class="ds-sub">Sector retail/alimentos · 2024–2025 · BP 2024 incompleto</div>
+      <div class="ds-kpis">
+        <div class="ds-kpi"><span class="ds-kpi-l">EBITDA 2025</span><span class="ds-kpi-v">$1,106M (4.17%)</span></div>
+        <div class="ds-kpi"><span class="ds-kpi-l">FCF 2025</span><span class="ds-kpi-v" style="color:#9e0d24">-$1,745M 🔴</span></div>
+        <div class="ds-kpi"><span class="ds-kpi-l">TEI 2025</span><span class="ds-kpi-v" style="color:#9e0d24">377% ⚠️ Anomalía</span></div>
+        <div class="ds-kpi"><span class="ds-kpi-l">Diff EFE</span><span class="ds-kpi-v" style="color:#c4922a">$572M = Δ REA</span></div>
+        <div class="ds-kpi"><span class="ds-kpi-l">Labs 14-15</span><span class="ds-kpi-v" style="color:#c4922a">En espera BP 2024</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PASOS -->
+<section style="background:white;border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+  <div class="section-label">Cómo funciona</div>
+  <div class="section-title">De BP a valoración en minutos</div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-n">1</div>
+      <div class="step-title">Cargue el BP</div>
+      <div class="step-body">Suba el archivo Excel de su Balance de Prueba (cualquier ERP colombiano). El motor C5 elimina cuentas padre (evita doble conteo), luego C1 decide la ruta por test algebraico.</div>
+    </div>
+    <div class="step">
+      <div class="step-n">2</div>
+      <div class="step-title">Valide el panel C1-C4</div>
+      <div class="step-body">Lea el diagnóstico automático: decisión de ruta con justificación numérica, coherencia de signos, identidad contable preliminar. Confirme antes de continuar.</div>
+    </div>
+    <div class="step">
+      <div class="step-n">3</div>
+      <div class="step-title">Seleccione el análisis</div>
+      <div class="step-body">Elija el Lab que necesita (7 al 15) o ejecute el análisis integral completo. El motor aplica automáticamente las reglas R1-R8.</div>
+    </div>
+    <div class="step">
+      <div class="step-n">4</div>
+      <div class="step-title">Exporte el entregable</div>
+      <div class="step-body">Descargue en Word (.docx), Excel (.xlsx) o PowerPoint (.pptx) — generación en navegador, sin servidor externo.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta">
+  <h2>Listo para analizar su empresa</h2>
+  <p>Cargue su Balance de Prueba y ejecute los Labs 7-15 ahora mismo.</p>
+  <a href="multi-agente-fpav.html">
+    <button class="btn-hero primary" style="font-size:15px;padding:16px 36px;">🚀 Abrir Orquestador →</button>
+  </a>
+  <div style="font-size:11px;color:#444;margin-top:16px;">
+    En GitHub Pages se requiere API Key de Anthropic (gratuita en console.anthropic.com).<br>
+    En claude.ai no se requiere key — usa el modelo nativo.
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-l">
+    © 2026 José Orcasita Celedón · ADVANCE · Universidad del Rosario · v11 · Labs 7-15
+  </div>
+  <div class="footer-r">
+    <a href="multi-agente-fpav.html" class="footer-link">App</a>
+    <a href="https://github.com/joseorcasitace/orquestador-financiero" target="_blank" class="footer-link">GitHub</a>
+    <a href="README.md" class="footer-link">README</a>
+    <a href="auditoria-ER-ESF-EFE-completo.txt" class="footer-link">Auditoría</a>
+  </div>
+</footer>
+
+</body>
+</html>
